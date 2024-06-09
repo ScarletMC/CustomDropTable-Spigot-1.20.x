@@ -21,8 +21,8 @@ public class ConfigManager {
     private Colors colors;
     private Logger log;
 
-    private File folder, settingsFile, messagesFile;
-    private FileConfiguration settings, messages;
+    private File folder, settingsFile, messagesFile, tablesFile;
+    private FileConfiguration settings, messages, tables;
 
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
@@ -34,10 +34,13 @@ public class ConfigManager {
         settings = new YamlConfiguration();
         messagesFile = new File(folder, "messages.yml");
         messages = new YamlConfiguration();
+        tablesFile = new File(folder, "tables.yml");
+        tables = new YamlConfiguration();
 
         if (!folder.exists()) folder.mkdir();
         if (!settingsFile.exists()) create(settings, settingsFile);
         if (!messagesFile.exists()) create(messages, messagesFile);
+        if (!tablesFile.exists()) create(tables, tablesFile);
 
         loadAll();
     }
@@ -75,11 +78,13 @@ public class ConfigManager {
     public void saveAll() {
         save(settings, settingsFile);
         save(messages, messagesFile);
+        save(tables, tablesFile);
     }
 
     public void loadAll() {
         load(settings, settingsFile);
         load(messages, messagesFile);
+        load(tables, tablesFile);
     }
 
     public File getSettingsFile() {
@@ -90,12 +95,20 @@ public class ConfigManager {
         return messagesFile;
     }
 
+    public File getTablesFile() {
+        return tablesFile;
+    }
+
     public FileConfiguration getSettings() {
         return settings;
     }
 
     public FileConfiguration getMessages() {
         return messages;
+    }
+
+    public FileConfiguration getTables() {
+        return tables;
     }
 
     public String getTranslatedString(FileConfiguration config, String target) {

@@ -1,13 +1,20 @@
 package me.sirimperivm.spigot.utils;
 
 import me.sirimperivm.spigot.Main;
+import me.sirimperivm.spigot.entities.CustomDrop;
 import me.sirimperivm.spigot.utils.colors.Colors;
 import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @SuppressWarnings("all")
 public class ModuleManager {
@@ -69,6 +76,91 @@ public class ModuleManager {
                 .replace("{currentpage}", String.valueOf(visualizedPage))
         );
         s.sendMessage(configManager.getTranslatedString(configManager.getMessages(),"helps-creator." + helpTarget + ".footer"));
+    }
+
+    public ItemStack getRandomDrop(String type, String target) {
+        List<CustomDrop> drops = new ArrayList<>();
+        for (String dropObj : configManager.getTables().getConfigurationSection(type + "." + target + ".custom-drops").getKeys(false)) {
+            String path = type + "." + target + ".custom-drops." + dropObj;
+
+            Material material = Material.getMaterial(configManager.getTables().getString(path + ".type"));
+            int minAmount = configManager.getTables().getInt(path + ".min-amount");
+            int maxAmount = configManager.getTables().getInt(path + ".max-amount");
+            double chance = configManager.getTables().getDouble(path + ".chance");
+
+            CustomDrop drop = new CustomDrop(dropObj, material, minAmount, maxAmount, chance);
+            drops.add(drop);
+        }
+
+        double maxChance = 0;
+        for (CustomDrop drop : drops) {
+            maxChance += drop.getChance();
+        }
+
+        double randomValue = Math.random() * 100;
+        double cumulativeChance = 0;
+
+        for (CustomDrop drop : drops) {
+            cumulativeChance += drop.getChance();
+            if (randomValue <= cumulativeChance) {
+                int amount = getRandomAmount(drop.getMinAmount(), drop.getMaxAmount());
+
+                String path = type + "." + target + ".custom-drops." + drop.getId();
+
+                ItemStack item = new ItemStack(drop.getType(), amount);
+                ItemMeta meta = item.getItemMeta();
+                String displayname = configManager.getTables().getString(path + ".display");
+                if (!displayname.equals("null"))
+                    meta.setDisplayName(colors.translateString(displayname));
+                meta.setLore(configManager.getTranslatedList(configManager.getTables(), path + ".lore"));
+                for (String flag : configManager.getTables().getStringList(path + ".flags"))
+                    meta.addItemFlags(ItemFlag.valueOf(flag));
+                item.setItemMeta(meta);
+                for (String enchantString : configManager.getTables().getStringList(path + ".enchants")) {
+                    String[] splitter = enchantString.split(":");
+                    String enchantName = splitter[0];
+                    int enchantLevel = 0;
+                    try {
+                        enchantLevel = Integer.parseInt(splitter[1]);
+                    } catch (NumberFormatException e) {
+                        log.fail("Impossibile aggiungere l'incantesimo a quest'oggetto; la stringa del livello non è un numero.");
+                        continue;
+                    }
+                    enchantLevel--;
+                    if (enchantLevel < 0) {
+                        log.fail("Impossibile aggiungere l'incantesimo a quest'oggetto; il livello è negativo.");
+                        continue;
+                    }
+
+                    item.addEnchantment(enchants.getEnchant(enchantName), enchantLevel);
+                }
+
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    private int getRandomAmount(int min, int max) {
+        Random rand = new Random();
+        return rand.nextInt((max-min) + 1) + min;
+    }
+
+    public int searchDuplicates(String type, String target) {
+        int duplicates = 0;
+        for (String duplicateObj : configManager.getTables().getConfigurationSection(type + "." + target).getKeys(false)) {
+            duplicates++;
+        }
+        return duplicates;
+    }
+
+    public double searchMaxChance(String type, String target) {
+        double chance = 0;
+        for (String dropObj : configManager.getTables().getConfigurationSection(type + "." + target + ".custom-drops").getKeys(false)) {
+            chance += configManager.getTables().getDouble(type + "." + target + ".custom-drops." + dropObj + ".chance");
+        }
+        return chance;
     }
 
     public boolean containsOnlyNumbers(String target) {
