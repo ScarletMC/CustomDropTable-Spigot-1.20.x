@@ -9,10 +9,13 @@ import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
 import me.sirimperivm.spigot.utils.other.Strings;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -84,6 +87,55 @@ public class Events implements Listener {
             return;
         }
         e.getDrops().add(randomDrop);
+        return;
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent e) {
+        Player player = e.getPlayer();
+        Block b = e.getBlock();
+
+        if (player.getGameMode() != GameMode.ADVENTURE && player.getGameMode() != GameMode.SURVIVAL)
+            return;
+
+        String blockName = b.getType().toString();
+        String blockNameUpper = blockName.toUpperCase();
+
+        if (configManager.getTables().getConfigurationSection("blocks." + blockNameUpper) == null)
+            return;
+
+        int duplicates = moduleManager.searchDuplicates("blocks", blockNameUpper);
+        if (duplicates > 1) {
+            Bukkit.broadcastMessage(configManager.getTranslatedString(configManager.getMessages(), "drop-tables-errors.blocks.duplicates-found")
+                    .replace("{duplicates}", String.valueOf(duplicates))
+                    .replace("{block-drop-table}", strings.capitalize(blockName))
+                    .replace("{block-drop-table-upper}", blockNameUpper)
+            );
+            return;
+        }
+        if (duplicates < 1)
+            return;
+
+        double maxChance = moduleManager.searchMaxChance("blocks", blockNameUpper);
+        if (maxChance != 100.0) {
+            Bukkit.broadcastMessage(configManager.getTranslatedString(configManager.getMessages(), "drop-tables-errors.blocks.max-chance-invalid")
+                    .replace("{block-drop-table}", strings.capitalize(blockName))
+                    .replace("{block-drop-table-upper}", blockNameUpper)
+            );
+            return;
+        }
+
+        ItemStack randomDrop = moduleManager.getRandomDrop("blocks", blockNameUpper);
+        if (randomDrop == null)
+            return;
+
+        boolean replaceDrops = configManager.getTables().getBoolean("blocks." + blockNameUpper + ".replace-default-drops");
+        if (replaceDrops) {
+            e.setDropItems(false);
+            b.getWorld().dropItemNaturally(b.getLocation(), randomDrop);
+            return;
+        }
+        b.getWorld().dropItemNaturally(b.getLocation(), randomDrop);
         return;
     }
 }

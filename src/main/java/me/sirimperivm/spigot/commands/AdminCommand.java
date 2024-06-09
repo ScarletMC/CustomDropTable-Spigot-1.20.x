@@ -52,7 +52,8 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
                     if (errors.noPermCommand(s, configManager.getSettings().getString("permissions.commands.admin.reload"))) {
                         return true;
                     } else {
-
+                        configManager.loadAll();
+                        s.sendMessage(configManager.getTranslatedString(configManager.getMessages(), "plugin-reloaded"));
                     }
                 } else {
                     getUsage(s, 1);

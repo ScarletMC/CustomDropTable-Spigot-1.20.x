@@ -4,11 +4,15 @@ no-perm:
 no-console: "&8[&c!&8] &7Questo comando è utilizzabile solo da player in gioco."
 invalid-args:
   only-numbers-allowed: "&8[&c!&8] &7Argomento &c{arg}&7 non valido, è previsto un numero."
+plugin-reloaded: "&8[&a!&8] &7Plugin ricaricato con successo."
 
 drop-tables-errors:
   mobs:
     duplicates-found: "&8[&c!&8] &7Nelle dropTables sono stati trovati &c{duplicates}&7 duplicati per il mob &c{mob-drop-table}&7. Non è possibile creare un drop custom."
     max-chance-invalid: "&8[&c!&8] &7La chance massima della droptable del mob &c{mob-drop-table}&7 non è uguale a &c100.0&7 perciò non può essere modificato il drop."
+  blocks:
+    duplicates-found: "&8[&c!&8] &7Nelle dropTables sono stati trovati &c{duplicates}&7 duplicati per il blocck &c{block-drop-table}&7. Non è possibile creare un drop custom."
+    max-chance-invalid: "&8[&c!&8] &7La chance massima della droptable del blocco &c{block-drop-table}&7 non è uguale a &c100.0&7 perciò non può essere modificato il drop."
 
 helps-creator:
   admin-command:

@@ -3,21 +3,86 @@ mobs:
     replace-default-drops: true
     custom-drops:
       1:
-        type: GUN_POWDER
+        type: TNT
         display: "null" # Imposta su null per non modificare il nome dell'oggetto droppato.
         lore: []
         enchants: [] # Formato incantesimi: <enchant-name>:<level>. Il livello dev'essere superiore a 0.
         flags: [] # Per impostarlo luminescente inserisci l'incantesimo LURE o UNBREAKING, e infine inserisci la flag HIDE_ENCHANTS per nascondere l'incantesimo.
+        attributes: [] # Formato attributi: <attribute-name>:<level>. Il livello dev'essere decimale e superiore a 0.
+        unbreakable: false
+        model: 0 # Imposta su 0 se non vuoi dargli nessun modello.
         min-amount: 5
-        max-amount: 10
-        chance: 80.0
-      2:
-        type: TNT
+        max-amount: 15
+        chance: 100.0
+  SLIME:
+    replace-default-drops: true
+    custom-drops:
+      1:
+        type: DIAMOND_SWORD
+        display: "&b&lHyper&f&lSword"
+        lore:
+          - "&7SHARPNESS 5"
+          - "&7LOOTING 3"
+          - "&7FIRE ASPECT 2"
+          - "&7SWEEPING EDGE 3"
+          - ""
+          - "&d&oUccidi chi vuoi!"
+        enchants:
+          - SHARPNESS:5
+          - LOOTING:3
+          - FIRE_ASPECT:2
+          - SWEEPING_EDGE:3
+        flags:
+          - HIDE_ENCHANTS
+        attributes: []
+        unbreakable: true
+        model: 0
+        min-amount: 1
+        max-amount: 1
+        chance: 100.0
+  SPIDER:
+    replace-default-drops: false
+    custom-drops:
+      1:
+        type: POTION
+        potion-effects: # Imposta questo solo se l'oggetto da droppare è una pozione.
+          # Formato pozioni: <potion-name>:<level>:<duration>. Il nome della pozione dev'essere l'id corretto; il livello dev'essere superiore a 0; la durata è in secondi.
+          - "POISON:2:120"
         display: "null"
         lore: []
         enchants: []
         flags: []
-        min-amount: 6
-        max-amount: 11
-        chance: 20.0
-blocks: {}
+        attributes: []
+        unbreakable: false
+        model: 0
+        min-amount: 1
+        max-amount: 1
+        chance: 100.0
+blocks:
+  GRASS_BLOCK:
+    replace-default-drops: false
+    custom-drops:
+      1:
+        type: DIAMOND
+        display: "null" # Imposta su null per non modificare il nome dell'oggetto droppato.
+        lore: []
+        enchants: [] # Formato incantesimi: <enchant-name>:<level>. Il livello dev'essere superiore a 0.
+        flags: [] # Per impostarlo luminescente inserisci l'incantesimo LURE o UNBREAKING, e infine inserisci la flag HIDE_ENCHANTS per nascondere l'incantesimo.
+        attributes: [] # Formato attributi: <attribute-name>:<level>. Il livello dev'essere decimale e superiore a 0.
+        unbreakable: false
+        model: 0 # Imposta su 0 se non vuoi dargli nessun modello.
+        min-amount: 1
+        max-amount: 3
+        chance: 60.0
+      2:
+        type: AIR
+        display: "null"
+        lore: []
+        enchants: []
+        flags: []
+        attributes: []
+        unbreakable: false
+        model: 0
+        min-amount: 1
+        max-amount: 1
+        chance: 40.0

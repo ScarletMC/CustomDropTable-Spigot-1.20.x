@@ -55,6 +55,7 @@ public class Enchants {
         }
 
         if (serverVersion >= 11) {
+            enchantsList.put("SWEEPING_EDGE", Enchantment.SWEEPING_EDGE);
             enchantsList.put("BINDING_CURSE", Enchantment.BINDING_CURSE);
             enchantsList.put("VANISHING_CURSE", Enchantment.VANISHING_CURSE);
         }
