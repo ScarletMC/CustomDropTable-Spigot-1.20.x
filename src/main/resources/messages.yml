@@ -1,0 +1,4 @@
+no-perm:
+  command: "&8[&c!&8] &7Necessiti del permesso &c{node}&7 per eseguire questo comando."
+  action: "&8[&c!&8] &7Necessiti del permesso &c{node}&7 per eseguire quest'azione."
+no-console: "&8[&c!&8] &7Questo comando è utilizzabile solo da player in gioco."
