@@ -1,6 +1,8 @@
 package me.sirimperivm.spigot;
 
+import me.sirimperivm.spigot.commands.AdminCommand;
 import me.sirimperivm.spigot.utils.ConfigManager;
+import me.sirimperivm.spigot.utils.ModuleManager;
 import me.sirimperivm.spigot.utils.colors.Colors;
 import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
@@ -18,6 +20,7 @@ public final class Main extends JavaPlugin {
     private ConfigManager configManager;
     private Errors errors;
     private Enchants enchants;
+    private ModuleManager moduleManager;
 
     @Override
     public void onEnable() {
@@ -27,6 +30,10 @@ public final class Main extends JavaPlugin {
         configManager = new ConfigManager(plugin);
         errors = new Errors(plugin);
         enchants = new Enchants(plugin);
+        moduleManager = new ModuleManager(plugin);
+
+        getCommand("customdroptable").setExecutor(new AdminCommand(plugin));
+        getCommand("customdroptable").setTabCompleter(new AdminCommand(plugin));
 
         log.success("Plugin attivato correttamente.");
     }
@@ -58,6 +65,10 @@ public final class Main extends JavaPlugin {
 
     public Enchants getEnchants() {
         return enchants;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
     }
 
     public int getServerVersion() {

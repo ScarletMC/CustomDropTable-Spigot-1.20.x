@@ -1,0 +1,5 @@
+permissions:
+  commands:
+    admin:
+      main: cdt.admin.main
+      reload: cdt.admin.reload

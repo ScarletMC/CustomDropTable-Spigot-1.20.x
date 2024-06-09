@@ -2,3 +2,18 @@ no-perm:
   command: "&8[&c!&8] &7Necessiti del permesso &c{node}&7 per eseguire questo comando."
   action: "&8[&c!&8] &7Necessiti del permesso &c{node}&7 per eseguire quest'azione."
 no-console: "&8[&c!&8] &7Questo comando è utilizzabile solo da player in gioco."
+invalid-args:
+  only-numbers-allowed: "&8[&c!&8] &7Argomento &c{arg}&7 non valido, è previsto un numero."
+
+helps-creator:
+  admin-command:
+    header: "&4&m                              "
+    title: "&e&lComandi &c&lAdmin:"
+    spacer: "&r"
+    line-format: "{command-name} &7- {command-description}"
+    page-format: "&cPagina: &7{currentpage}"
+    footer: "&4&m                              "
+    lines:
+      - "&4/&ccustomdroptable[cdt] &e[help] [page]-&cMostra i comandi disponibili."
+      - "&4/&ccustomdroptable[cdt] reload-&cRicarica il plugin."
+    max-lines-per-page: 2
