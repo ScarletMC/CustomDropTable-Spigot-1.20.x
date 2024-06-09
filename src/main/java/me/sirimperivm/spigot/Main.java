@@ -2,8 +2,11 @@ package me.sirimperivm.spigot;
 
 import me.sirimperivm.spigot.utils.ConfigManager;
 import me.sirimperivm.spigot.utils.colors.Colors;
+import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
+import org.apache.commons.lang3.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("all")
@@ -14,6 +17,7 @@ public final class Main extends JavaPlugin {
     private Logger log;
     private ConfigManager configManager;
     private Errors errors;
+    private Enchants enchants;
 
     @Override
     public void onEnable() {
@@ -22,6 +26,7 @@ public final class Main extends JavaPlugin {
         log = new Logger(plugin, "CustomDropTable");
         configManager = new ConfigManager(plugin);
         errors = new Errors(plugin);
+        enchants = new Enchants(plugin);
 
         log.success("Plugin attivato correttamente.");
     }
@@ -49,5 +54,27 @@ public final class Main extends JavaPlugin {
 
     public Errors getErrors() {
         return errors;
+    }
+
+    public Enchants getEnchants() {
+        return enchants;
+    }
+
+    public int getServerVersion() {
+        String version = Bukkit.getVersion();
+        Validate.notEmpty(version, "Impossibile ottenere la versione principale di Minecraft da una stringa nulla o vuota");
+
+        int index = version.lastIndexOf("MC:");
+        if (index != -1) {
+            version = version.substring(index + 4, version.length() -1);
+        } else if (version.endsWith("SNAPSHOT")) {
+            index = version.indexOf('-');
+            version = version.substring(0, index);
+        }
+
+        int lastDot = version.lastIndexOf('.');
+        if (version.indexOf('.') != lastDot) version = version.substring(0, lastDot);
+
+        return Integer.parseInt(version.substring(2));
     }
 }
