@@ -4,13 +4,13 @@ import me.sirimperivm.spigot.Main;
 import me.sirimperivm.spigot.utils.ConfigManager;
 import me.sirimperivm.spigot.utils.ModuleManager;
 import me.sirimperivm.spigot.utils.colors.Colors;
-import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
 import me.sirimperivm.spigot.utils.other.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +18,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
 
 @SuppressWarnings("all")
 public class Events implements Listener {
@@ -28,8 +30,9 @@ public class Events implements Listener {
     private Logger log;
     private ConfigManager configManager;
     private Errors errors;
-    private Enchants enchants;
     private ModuleManager moduleManager;
+
+    private HashMap<String, String> killedEntity;
 
     public Events(Main plugin) {
         this.plugin = plugin;
@@ -38,18 +41,20 @@ public class Events implements Listener {
         log = plugin.getLog();
         configManager = plugin.getConfigManager();
         errors = plugin.getErrors();
-        enchants = plugin.getEnchants();
         moduleManager = plugin.getModuleManager();
+
+        killedEntity = new HashMap<>();
     }
 
     @EventHandler
     public void onMobDeath(EntityDeathEvent e) {
-        Entity en = e.getEntity();
+        Entity v = e.getEntity();
+        Entity k = e.getEntity().getKiller();
 
-        if (en instanceof Player)
+        if (v instanceof Player)
             return;
 
-        String mobName = en.getType().toString();
+        String mobName = v.getType().toString();
         String mobNameUpper = mobName.toUpperCase();
 
         if (configManager.getTables().getConfigurationSection("mobs." + mobNameUpper) == null)
@@ -76,7 +81,16 @@ public class Events implements Listener {
             return;
         }
 
-        ItemStack randomDrop = moduleManager.getRandomDrop("mobs", mobNameUpper);
+        int multiplier = 1;
+        if (k instanceof Player) {
+            Player killer = (Player) k;
+            if (killer.getInventory().getItemInMainHand().getEnchantments().containsKey(Enchantment.LOOTING)) {
+                int lootingLevel = killer.getInventory().getItemInMainHand().getEnchantments().get(Enchantment.LOOTING);
+                multiplier = moduleManager.calculateMultiplier((double) multiplier, lootingLevel);
+            }
+        }
+
+        ItemStack randomDrop = moduleManager.getRandomDrop("mobs", mobNameUpper, multiplier);
         if (randomDrop == null)
             return;
 
@@ -125,7 +139,13 @@ public class Events implements Listener {
             return;
         }
 
-        ItemStack randomDrop = moduleManager.getRandomDrop("blocks", blockNameUpper);
+        int multiplier = 1;
+        if (player.getInventory().getItemInMainHand().getEnchantments().containsKey(Enchantment.LOOTING)) {
+            int lootingLevel = player.getInventory().getItemInMainHand().getEnchantments().get(Enchantment.LOOTING);
+            multiplier = moduleManager.calculateMultiplier((double) multiplier, lootingLevel);
+        }
+
+        ItemStack randomDrop = moduleManager.getRandomDrop("blocks", blockNameUpper, multiplier);
         if (randomDrop == null)
             return;
 

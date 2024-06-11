@@ -4,7 +4,6 @@ import me.sirimperivm.spigot.Main;
 import me.sirimperivm.spigot.utils.ConfigManager;
 import me.sirimperivm.spigot.utils.ModuleManager;
 import me.sirimperivm.spigot.utils.colors.Colors;
-import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
 import org.bukkit.command.Command;
@@ -23,7 +22,6 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
     private Logger log;
     private ConfigManager configManager;
     private Errors errors;
-    private Enchants enchants;
     private ModuleManager moduleManager;
 
     public AdminCommand(Main plugin) {
@@ -32,7 +30,6 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         log = plugin.getLog();
         configManager = plugin.getConfigManager();
         errors = plugin.getErrors();
-        enchants = plugin.getEnchants();
         moduleManager = plugin.getModuleManager();
     }
 

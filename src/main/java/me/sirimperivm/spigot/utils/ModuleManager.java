@@ -3,7 +3,6 @@ package me.sirimperivm.spigot.utils;
 import me.sirimperivm.spigot.Main;
 import me.sirimperivm.spigot.entities.DropTable;
 import me.sirimperivm.spigot.utils.colors.Colors;
-import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
 import org.bukkit.Material;
@@ -33,7 +32,6 @@ public class ModuleManager {
     private Logger log;
     private ConfigManager configManager;
     private Errors errors;
-    private Enchants enchants;
 
     public ModuleManager(Main plugin) {
         this.plugin = plugin;
@@ -41,7 +39,6 @@ public class ModuleManager {
         log = plugin.getLog();
         configManager = plugin.getConfigManager();
         errors = plugin.getErrors();
-        enchants = plugin.getEnchants();
     }
 
     public void createHelp(CommandSender s, String helpTarget, int page) {
@@ -87,14 +84,36 @@ public class ModuleManager {
         s.sendMessage(configManager.getTranslatedString(configManager.getMessages(),"helps-creator." + helpTarget + ".footer"));
     }
 
-    public ItemStack getRandomDrop(String type, String target) {
+    public int calculateMultiplier(double baseMultiplier, int lootingLevel) {
+        double multiplier = baseMultiplier;
+        if (baseMultiplier < 1.0) return 1;
+        if (lootingLevel < 1) return 1;
+        if (lootingLevel >= 1 && lootingLevel <= 5) {
+            multiplier += (double) lootingLevel;
+        }
+        if (lootingLevel > 5 && lootingLevel <= 20) {
+            multiplier = 6.0 + (baseMultiplier + (double) (lootingLevel/2));
+        }
+        if (lootingLevel > 20 && lootingLevel <= 50) {
+            multiplier = 17.0 + (baseMultiplier + (double) (lootingLevel/4));
+        }
+        if (lootingLevel > 50 && lootingLevel <= 100) {
+            multiplier = 30.5 + (baseMultiplier + (double) (lootingLevel/8));
+        }
+        if (lootingLevel > 100 && lootingLevel <= 255) {
+            multiplier = 44.0 + (baseMultiplier + (double) (lootingLevel/16));
+        }
+        return (int) multiplier;
+    }
+
+    public ItemStack getRandomDrop(String type, String target, int multiplier) {
         List<DropTable> dropTables = new ArrayList<>();
         for (String key : configManager.getTables().getConfigurationSection(type + "." + target + ".custom-drops").getKeys(false)) {
             String path = type + "." + target + ".custom-drops." + key;
 
             int minAmount = configManager.getTables().getInt(path + ".min-amount");
             int maxAmount = configManager.getTables().getInt(path + ".max-amount");
-            int amount = getRandomAmount(minAmount, maxAmount);
+            int amount = getRandomAmount(minAmount, maxAmount) * multiplier;
 
             String materialName = configManager.getTables().getString(path + ".type");
             if (materialName.equals("AIR")) continue;
@@ -159,11 +178,11 @@ public class ModuleManager {
                     continue;
                 }
 
-                Enchantment enchant = enchants.getEnchant(enchantName);
+                Enchantment enchant = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchantName.toLowerCase()));
                 if (enchant != null) {
-                    itemMeta.addEnchant(enchants.getEnchant(enchantName), enchantLevel, true);
+                    itemMeta.addEnchant(enchant, enchantLevel, true);
                 } else {
-                    log.fail("L'incantesimo " + enchantName + " non esiste.");
+                    log.fail("Impossibile aggiungere un incantesimo: " + enchantName + " non esiste.");
                     continue;
                 }
             }

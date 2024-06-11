@@ -5,7 +5,6 @@ import me.sirimperivm.spigot.events.Events;
 import me.sirimperivm.spigot.utils.ConfigManager;
 import me.sirimperivm.spigot.utils.ModuleManager;
 import me.sirimperivm.spigot.utils.colors.Colors;
-import me.sirimperivm.spigot.utils.enchants.Enchants;
 import me.sirimperivm.spigot.utils.other.Errors;
 import me.sirimperivm.spigot.utils.other.Logger;
 import me.sirimperivm.spigot.utils.other.Strings;
@@ -24,7 +23,6 @@ public final class Main extends JavaPlugin {
     private Logger log;
     private ConfigManager configManager;
     private Errors errors;
-    private Enchants enchants;
     private ModuleManager moduleManager;
 
     @Override
@@ -35,7 +33,6 @@ public final class Main extends JavaPlugin {
         log = new Logger(plugin, "CustomDropTable");
         configManager = new ConfigManager(plugin);
         errors = new Errors(plugin);
-        enchants = new Enchants(plugin);
         moduleManager = new ModuleManager(plugin);
 
         getCommand("customdroptable").setExecutor(new AdminCommand(plugin));
@@ -72,10 +69,6 @@ public final class Main extends JavaPlugin {
 
     public Errors getErrors() {
         return errors;
-    }
-
-    public Enchants getEnchants() {
-        return enchants;
     }
 
     public ModuleManager getModuleManager() {
