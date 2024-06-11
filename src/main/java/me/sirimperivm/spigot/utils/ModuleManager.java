@@ -111,9 +111,11 @@ public class ModuleManager {
         for (String key : configManager.getTables().getConfigurationSection(type + "." + target + ".custom-drops").getKeys(false)) {
             String path = type + "." + target + ".custom-drops." + key;
 
+            boolean lootingAffect = configManager.getTables().getBoolean(path + ".looting-affect");
+
             int minAmount = configManager.getTables().getInt(path + ".min-amount");
             int maxAmount = configManager.getTables().getInt(path + ".max-amount");
-            int amount = getRandomAmount(minAmount, maxAmount) * multiplier;
+            int amount = lootingAffect ? getRandomAmount(minAmount, maxAmount) * multiplier : getRandomAmount(minAmount, maxAmount);
 
             String materialName = configManager.getTables().getString(path + ".type");
             if (materialName.equals("AIR")) continue;
