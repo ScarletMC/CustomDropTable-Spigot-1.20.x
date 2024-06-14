@@ -115,7 +115,9 @@ public class ModuleManager {
 
             int minAmount = configManager.getTables().getInt(path + ".min-amount");
             int maxAmount = configManager.getTables().getInt(path + ".max-amount");
-            int amount = lootingAffect ? getRandomAmount(minAmount, maxAmount) * multiplier : getRandomAmount(minAmount, maxAmount);
+            minAmount = lootingAffect ? minAmount * multiplier : minAmount;
+            maxAmount= lootingAffect ? maxAmount * multiplier : maxAmount;
+            int amount = getRandomAmount(minAmount, maxAmount);
 
             String materialName = configManager.getTables().getString(path + ".type");
             if (materialName.equals("AIR")) continue;
